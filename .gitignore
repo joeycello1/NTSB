@@ -1,3 +1,9 @@
+Images/
+Notebooks/
+Aviation_presentation_slides.pdf
+jupyter-notebook.pdf
+presentation.pdf
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
