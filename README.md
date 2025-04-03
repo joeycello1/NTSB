@@ -24,7 +24,7 @@ The safety of air travel has significantly improved over the past half-century, 
 It would be informative to aggregate some data concerning the overall number of aircraft in use in the industries over the same period as the accident dataset. This would give us the opportunity to evaluate the safety record of different makes and models of aircraft as we would have figures related to their overall representation in the industry. Then, recommendations could be made regarding what makes and models would be the best investment for the company from a reliability and safety standpoint.
 Completing the Report Status column of the dataset would be extremely helpful in providing more insights as to the safety protocols, training, and maintenance of the aircraft industries.
 ## Repo Structure
-<a href="https://github.com/joeycello1/NTSB/blob/main/Phase_1_project-aviation.ipynb" target="_blank">Phase_1_project-aviation.ipynb</a> is the aggregation of the analysis code< br/>
+<a href="https://github.com/joeycello1/NTSB/blob/main/Phase_1_project-aviation.ipynb" target="_blank">Phase_1_project-aviation.ipynb</a> is the aggregation of the analysis code<br>
 The folder working-df holds the dataset (AviationData.csv)
 ## Links to other project files
 <a href="https://public.tableau.com/views/Aviation_17434275679900/phaseanddamage?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link" target="_blank">Tableau Worksheets and Dashboard</a>
