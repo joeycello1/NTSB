@@ -1,0 +1,264 @@
+# replace dots in column names with underscores
+df.columns = df.columns.str.replace('.', '_')
+
+# categories of aircraft
+df['Aircraft.Category'].value_counts()
+
+# remove columns (Event_Id, Accident_Number, Latitude, Longitude, Registration_Number, Publication_Date)
+df = df.drop(columns=['Event_Id', 'Accident_Number', 'Latitude', 'Longitude', 'Registration_Number', 'Publication_Date'])
+
+# print the values under Investigation.Type
+df['Report.Status'].value_counts()
+
+# show me the most recent Event.Date
+df['Event.Date'].max()
+
+# replace dots in column names with underscores
+df.columns = df.columns.str.replace('.', '_')
+
+# remove columns (Event_Id, Accident_Number, Latitude, Longitude, Registration_Number, Publication_Date)
+df = df.drop(columns=['Event_Id', 'Accident_Number', 'Latitude', 'Longitude', 'Registration_Number', 'Publication_Date'])
+
+# look for max and min in the Total_Fatal_Injuries column
+print(df['Total_Fatal_Injuries'].max())
+print(df['Total_Fatal_Injuries'].min())
+
+df['Total_Serious_Injuries'].max()
+I see here that these 2 rows constitute one event where the fatality count is the same for each row because the numbers for each aircraft are combined. This would indicate that the rows are duplicate for analysis purposes, so one row from this pair can be removed.
+
+Check to see if there are any other duplicated events through Event_Date and Location.
+
+# show row with the max Total_Fatal_Injuries
+df[df['Total_Fatal_Injuries'] == df['Total_Fatal_Injuries'].max()]
+
+
+duplicate_rows = df[df.duplicated(subset=['Event_Date', 'Location'], keep=False)]
+
+num_duplicates = len(duplicate_rows)
+print(f"\nNumber of duplicate rows: {num_duplicates}")
+
+
+print("Duplicate Rows based on Event_Date and Location:")
+print(duplicate_rows)
+
+
+
+# Clean the Make column for misspellings, all caps issues, etc for 'A'
+make_column_name_replace_a = {'Ab Sportine Aviacija': 'Sportine Aviacija', 'AB SPORTINE AVIACIJA': 'Sportine Aviacija', 'SPORTINE AVIACIJA': 'Sportine Aviacija', 'Abrams/nuding': 'Abrams', 'ACRO': 'Acro Sport', 'Adams': 'Adams Balloon', 'ADAMS': 'Adams Balloon', 'ADAMS BALLOONS LLC': 'Adams Balloon', 'AERO COMMANDER': 'Aero Commander', 'AERO VODOCHODY': 'Aero Vodochody', 'AEROVODOCHODY': 'Aero Vodochody', 'Aero Vodochody Aero Works': 'Aero Vodochody', 'AEROFAB INC': 'Aerofab Inc.', 'AEROMOT': 'Aeromot', 'AERONCA': 'Aeronca', 'Aeronca Aircraft Corporation': 'Aeronca', 'AEROPRO CZ': 'Aeropro CZ', 'AEROS': 'Aeros', 'Aeros LTD': 'Aeros', 'AEROS LTD': 'Aeros', 'AEROSPATIALE': 'Aerospatiale', 'AEROSTAR': 'Aerostar', 'Aerostar International': 'Aerostar', 'AEROSTAR INTERNATIONAL': 'Aerostar', 'Aerostar International Inc': 'Aerostar', 'AEROSTAR INTERNATIONAL INC': 'Aerostar', 'Aerostar International Inc.': 'Aerostar', 'Aerostar International, Inc.': 'Aerostar', 'AEROTEK': 'Aerotek', 'Aerotek-pitts': 'Aerotek', 'AEROTEK INC': 'Aerotek', 'AGUSTA': 'Agusta', 'AGUSTA AEROSPACE CORP': 'Agusta', 'AGUSTA SPA': 'Agusta', 'Agusta Spa': 'Agusta', 'Agusta-bell': 'Agusta', 'Agusta/Westland': 'Agusta', 'AGUSTAWESTLAND': 'Agusta', 'AgustaWestland': 'Agusta', 'AgustadWestland': 'Agusta', 'AGUSTAWESTLAND PHILADELPHIA': 'Agusta', 'AGUSTAWESTLAND SPA': 'Agusta', 'AIR CREATION': 'Air Creation', 'Air Creations': 'Air Creation', 'AIR TRACTOR': 'Air Tractor', 'AIR TRACTOR INC': 'Air Tractor', 'Air Tractor Inc': 'Air Tractor', 'Air Tractor Inc.': 'Air Tractor', 'AIR TRACTOR INC.': 'Air Tractor', 'Air Tractor, Inc.': 'Air Tractor', 'Air Borne Windsports Pty. Ltd.': 'Airborne', 'AIRBORNE (AUSTRALIA)': 'Airborne', 'AIRBORNE AUSTRALIA': 'Airborne', 'AIRBORNE EXTREME LLC': 'Airborne', 'AirBorne WindSport': 'Airborne', 'Airborne Windsports': 'Airborne', 'AIRBORNE WINDSPORTS': 'Airborne', 'Airborne Windsports Ltd': 'Airborne', 'AIRBORNE WINDSPORTS PTY LTD': 'Airborne', 'Airborne Windsports PTY LTD': 'Airborne', 'AIRBORNE': 'Airborne', 'AIRBUS': 'Airbus', 'AIRBUS HELICOPTERS': 'Airbus Helicopters', 'AIRBUS HELICOPTER': 'Airbus Helicopters', 'Airbus Helicopters (Eurocopte': 'Airbus Helicopters', 'Airbus Helicopters Deutschland': 'Airbus Helicopters', 'AIRBUS HELICOPTERS INC': 'Airbus Helicopters', 'Airbus Industrie': 'Airbus', 'AIRBUS INDUSTRIE': 'Airbus', 'AIRCRAFT MFG & DEVELOPMENT CO': 'Aircraft Mfg & Dev. Co.', 'Aircraft Mfg & Dev. Co. (amd)': 'Aircraft Mfg & Dev. Co.', 'Aircraft Mfg & Dev. Co. (AMD)':'Aircraft Mfg & Dev. Co.', 'Aircraft Mfg & Development Co.': 'Aircraft Mfg & Dev. Co.', 'AIRCRAFT MFG & DVLPMT CO': 'Aircraft Mfg & Dev. Co.', 'ALON': 'Alon', 'AMERICAN': 'American Aviation', 'American': 'American Aviation', 'AMERICAN AVIATION': 'American Aviation', 'American Aviation Corp. (aac)': 'American Aviation', 'AMERICAN CHAMPION': 'American Champion', 'American Champion (acac)': 'American Champion', 'American Champion (ACAC)': 'American Champion', 'American Champion Aircraft': 'American Champion', 'AMERICAN CHAMPION AIRCRAFT': 'American Champion', 'American Champion Aircraft Cor': 'American Champion', 'AMERICAN EUROCOPTER CORP': 'American Eurocopter', 'AMERICAN GENERAL ACFT CORP': 'American General Aircraft', 'American Legand Aircraft': 'American Legend', 'AMERICAN LEGEND': 'American Legend', 'AMERICAN LEGEND AIRCRAFT CO': 'American Legend', 'American Legend Aircraft Co.': 'American Legend', 'Anderson': 'Anderson Aircraft Corp.', 'Atr': 'ATR', 'AVIAT': 'Aviat', 'AVIAT AIRCRAFT': 'Aviat', 'Aviat Aircraft Inc': 'Aviat', 'AVIAT AIRCRAFT INC': 'Aviat', 'Aviat Aircraft Inc.': 'Aviat', 'Aviat Aircraft, Inc.': 'Aviat', 'Aviat Inc': 'Aviat', 'AVIAT INC': 'Aviat', 'Avid': 'Avid Aircraft', 'AVID': 'Avid Aircraft', 'AYERS': 'Ayres', 'Ayers': 'Ayres', 'AYRES': 'Ayres', 'AYRES CORP': 'Ayres', 'Ayres Corporation': 'Ayres', 'AYRES CORPORATION': 'Ayres'}
+
+df['Make'] = df['Make'].replace(make_column_name_replace_a)
+
+
+
+
+
+'Ab Sportine Aviacija': 'Sportine Aviacija', 'AB SPORTINE AVIACIJA': 'Sportine Aviacija', 'SPORTINE AVIACIJA': 'Sportine Aviacija', 'Abrams/nuding': 'Abrams', 'ACRO': 'Acro Sport', 'Adams': 'Adams Balloon', 'ADAMS': 'Adams Balloon', 'ADAMS BALLOONS LLC': 'Adams Balloon', 'AERO COMMANDER': 'Aero Commander', 'AERO VODOCHODY': 'Aero Vodochody', 'AEROVODOCHODY': 'Aero Vodochody', 'Aero Vodochody Aero Works': 'Aero Vodochody', 'AEROFAB INC': 'Aerofab Inc.', 'AEROMOT': 'Aeromot', 'AERONCA': 'Aeronca', 'Aeronca Aircraft Corporation': 'Aeronca', 'AEROPRO CZ': 'Aeropro CZ', 'AEROS': 'Aeros', 'Aeros LTD': 'Aeros', 'AEROS LTD': 'Aeros', 'AEROSPATIALE': 'Aerospatiale', 'AEROSTAR': 'Aerostar', 'Aerostar International': 'Aerostar', 'AEROSTAR INTERNATIONAL': 'Aerostar', 'Aerostar International Inc': 'Aerostar', 'AEROSTAR INTERNATIONAL INC': 'Aerostar', 'Aerostar International Inc.': 'Aerostar', 'Aerostar International, Inc.': 'Aerostar', 'AEROTEK': 'Aerotek', 'Aerotek-pitts': 'Aerotek', 'AEROTEK INC': 'Aerotek', 'AGUSTA': 'Agusta', 'AGUSTA AEROSPACE CORP': 'Agusta', 'AGUSTA SPA': 'Agusta', 'Agusta Spa': 'Agusta', 'Agusta-bell': 'Agusta', 'Agusta/Westland': 'Agusta', 'AGUSTAWESTLAND': 'Agusta', 'AgustaWestland': 'Agusta', 'AgustadWestland': 'Agusta', 'AGUSTAWESTLAND PHILADELPHIA': 'Agusta', 'AGUSTAWESTLAND SPA': 'Agusta', 'AIR CREATION': 'Air Creation', 'Air Creations': 'Air Creation', 'AIR TRACTOR': 'Air Tractor', 'AIR TRACTOR INC': 'Air Tractor', 'Air Tractor Inc': 'Air Tractor', 'Air Tractor Inc.': 'Air Tractor', 'AIR TRACTOR INC.': 'Air Tractor', 'Air Tractor, Inc.': 'Air Tractor', 'Air Borne Windsports Pty. Ltd.': 'Airborne', 'AIRBORNE (AUSTRALIA)': 'Airborne', 'AIRBORNE AUSTRALIA': 'Airborne', 'AIRBORNE EXTREME LLC': 'Airborne', 'AirBorne WindSport': 'Airborne', 'Airborne Windsports': 'Airborne', 'AIRBORNE WINDSPORTS': 'Airborne', 'Airborne Windsports Ltd': 'Airborne', 'AIRBORNE WINDSPORTS PTY LTD': 'Airborne', 'Airborne Windsports PTY LTD': 'Airborne', 'AIRBORNE': 'Airborne', 'AIRBUS': 'Airbus', 'AIRBUS HELICOPTERS': 'Airbus Helicopters', 'AIRBUS HELICOPTER': 'Airbus Helicopters', 'Airbus Helicopters (Eurocopte': 'Airbus Helicopters', 'Airbus Helicopters Deutschland': 'Airbus Helicopters', 'AIRBUS HELICOPTERS INC': 'Airbus Helicopters', 'Airbus Industrie': 'Airbus', 'AIRBUS INDUSTRIE': 'Airbus', 'AIRCRAFT MFG & DEVELOPMENT CO': 'Aircraft Mfg & Dev. Co.', 'Aircraft Mfg & Dev. Co. (amd)': 'Aircraft Mfg & Dev. Co.', 'Aircraft Mfg & Dev. Co. (AMD)':'Aircraft Mfg & Dev. Co.', 'Aircraft Mfg & Development Co.': 'Aircraft Mfg & Dev. Co.', 'AIRCRAFT MFG & DVLPMT CO': 'Aircraft Mfg & Dev. Co.', 'ALON': 'Alon', 'AMERICAN': 'American Aviation', 'American': 'American Aviation', 'AMERICAN AVIATION': 'American Aviation', 'American Aviation Corp. (aac)': 'American Aviation', 'AMERICAN CHAMPION': 'American Champion', 'American Champion (acac)': 'American Champion', 'American Champion (ACAC)': 'American Champion', 'American Champion Aircraft': 'American Champion', 'AMERICAN CHAMPION AIRCRAFT': 'American Champion', 'American Champion Aircraft Cor': 'American Champion', 'AMERICAN EUROCOPTER CORP': 'American Eurocopter', 'AMERICAN GENERAL ACFT CORP': 'American General Aircraft', 'American Legand Aircraft': 'American Legend', 'AMERICAN LEGEND': 'American Legend', 'AMERICAN LEGEND AIRCRAFT CO': 'American Legend', 'American Legend Aircraft Co.': 'American Legend', 'Anderson': 'Anderson Aircraft Corp.', 'Atr': 'ATR', 'AVIAT': 'Aviat', 'AVIAT AIRCRAFT': 'Aviat', 'Aviat Aircraft Inc': 'Aviat', 'AVIAT AIRCRAFT INC': 'Aviat', 'Aviat Aircraft Inc.': 'Aviat', 'Aviat Aircraft, Inc.': 'Aviat', 'Aviat Inc': 'Aviat', 'AVIAT INC': 'Aviat', 'Avid': 'Avid Aircraft', 'AVID': 'Avid Aircraft', 'AYERS': 'Ayres', 'Ayers': 'Ayres', 'AYRES': 'Ayres', 'AYRES CORP': 'Ayres', 'Ayres Corporation': 'Ayres', 'AYRES CORPORATION': 'Ayres'
+
+Air Tractor	910
+Aeronca	629
+Airbus	445
+Aero Commander	425
+Aerospatiale	380
+Ayres	284
+Aviat	231
+Aerostar	122
+American Aviation	119
+American Champion	101
+Agusta	86
+Aerotek	48
+Alon	41
+Airborne	40
+ATR	35
+Aero Vodochody	33
+American Legend	29
+Adams Balloon	26
+Avid Aircraft	20
+American General Aircraft	19
+Aircraft Mfg & Dev. Co.	19
+Air Creation	19
+Airbus Helicopters	18
+Air Command	17
+Artic Aircraft Corp.	17
+Anderson Aircraft Corp.	16
+Aerofab Inc.	14
+Air & Space	13
+Aeropro CZ	12
+American Eurocopter	12
+American Aerolights	10
+
+
+
+
+# Clean the Make column for misspellings, all caps issues, etc for 'B'
+make_column_name_replace_b = {'Bede': 'Bede Aircraft', 'BEDE': 'Bede Aircraft', 'BEECH': 'Beech', 'BEECH AIRCRAFT': 'Beech', 'BEECH AIRCRAFT CO.': 'Beech', 'Beech Aircraft Corp': 'Beech', 'Beech Aircraft Corporation': 'Beech', 'BEECH AIRCRAFT CORPORATION': 'Beech', 'Beechcraft': 'Beech', 'BEECHCRAFT': 'Beech', 'Beechcraft Corporation': 'Beech', 'BOEING': 'Boeing', 'Boeing - Canada (de Havilland)': 'Boeing', 'Boeing (Stearman)': 'Boeing', 'BOEING 777-306ER': 'Boeing', 'Boeing Commercial Airplane Gro': 'Boeing', 'BOEING COMPANY': 'Boeing', 'Boeing Company': 'Boeing', 'BOEING OF CANADA/DEHAV DIV': 'Boeing', 'Boeing Stearman': 'Boeing', 'BOEING-STEARMAN': 'Boeing', 'Boeing-brown': 'Boeing', 'BOMBARDIER': 'Bombardier', 'Bombardier Aerospace, Inc.': 'Bombardier', 'Bombardier Canadair': 'Bombardier', 'BOMBARDIER INC': 'Bombardier', 'BOMBARDIER LEARJET CORP.': 'Bombardier', 'Bombardier, Inc.': 'Bombardier', 'BRITISH AEROSPACE': 'British Aerospace', 'British Aerospace Civil Aircr': 'British Aerospace', 'BRITTEN NORMAN': 'Britten Norman', 'Britten-norman': 'Britten Norman', 'BRITTEN-NORMAN': 'Britten Norman'}
+
+df['Make'] = df['Make'].replace(make_column_name_replace_b)
+
+
+'Bede': 'Bede Aircraft', 'BEDE': 'Bede Aircraft', 'BEECH': 'Beech', 'BEECH AIRCRAFT': 'Beech', 'BEECH AIRCRAFT CO.': 'Beech', 'Beech Aircraft Corp': 'Beech', 'Beech Aircraft Corporation': 'Beech', 'BEECH AIRCRAFT CORPORATION': 'Beech', 'Beechcraft': 'Beech', 'BEECHCRAFT': 'Beech', 'Beechcraft Corporation': 'Beech', 'BOEING': 'Boeing', 'Boeing - Canada (de Havilland)': 'Boeing', 'Boeing (Stearman)': 'Boeing', 'BOEING 777-306ER': 'Boeing', 'Boeing Commercial Airplane Gro': 'Boeing', 'BOEING COMPANY': 'Boeing', 'Boeing Company': 'Boeing', 'BOEING OF CANADA/DEHAV DIV': 'Boeing', 'Boeing Stearman': 'Boeing', 'BOEING-STEARMAN': 'Boeing', 'Boeing-brown': 'Boeing', 'BOMBARDIER': 'Bombardier', 'Bombardier Aerospace, Inc.': 'Bombardier', 'Bombardier Canadair': 'Bombardier', 'BOMBARDIER INC': 'Bombardier', 'BOMBARDIER LEARJET CORP.': 'Bombardier', 'Bombardier, Inc.': 'Bombardier', 'BRITISH AEROSPACE': 'British Aerospace', 'British Aerospace Civil Aircr': 'British Aerospace', 'BRITTEN NORMAN': 'Britten Norman', 'Britten-norman': 'Britten Norman', 'BRITTEN-NORMAN': 'Britten Norman'
+
+
+
+
+
+'CANADAIR': 'Canadair', 'CANADAIR LTD': 'Canadair', 'CASA': 'Casa', 'Cassult Racer': 'Cassuit', 'CASSUTT': 'Cassuit', 'Cesna': 'Cessna', 'CESSNA': 'Cessna', 'CESSNA AIRCRAFT': 'Cessna', 'CESSNA Aircraft': 'Cessna', 'CESSNA AIRCRAFT CO': 'Cessna', 'Cessna Aircraft Co.': 'Cessna', 'CESSNA AIRCRAFT COMPANY': 'Cessna', 'Cessna Aircraft Company': 'Cessna', 'Cessna Ector': 'Cessna', 'CESSNA ECTOR': 'Cessna', 'Cessna Reems': 'Cessna', 'CESSNA REIMS': 'Cessna', 'Cessna Robertson': 'Cessna', 'Cessna Skyhawk II': 'Cessna', 'Cessna Soloy': 'Cessna', 'Cessna Wren': 'Cessna', 'CESSNA/AIR REPAIR INC': 'Cessna', 'CESSNA/WEAVER': 'Cessna', 'CHALLENGER': 'Challenger', 'Challenger Ii': 'Challenger', 'CHAMBERLAIN GERALD': 'Chamberlain', 'CHAMBERLIN VICTOR WAYNE': 'Chamberlain', 'CHAMPION': 'Champion', 'CHANCE VOUGHT': 'Chance Vought', 'CHRISTEN INDUSTRIES INC': 'Christen Industries', 'Christen Industries, Inc.': 'Christen Industries', 'CIRRUS': 'Cirrus', 'Cirrus Design': 'Cirrus', 'CIRRUS DESIGN': 'Cirrus', 'Cirrus Design Corp': 'Cirrus', 'CIRRUS DESIGN CORP': 'Cirrus', 'Cirrus Design Corp.': 'Cirrus', 'CIRRUS DESIGN CORP.': 'Cirrus', 'Cirrus Design Corporation': 'Cirrus', 'CIRRUS DESIGN CORPORATION': 'Cirrus', 'CLASSIC AIRCRAFT CORP': 'Classic Aircraft Corp', 'Classic Aircraft Corp.': 'Classic Aircraft Corp', 'COLUMBIA': 'Columbia', 'Columbia Aircraft': 'Columbia', 'Columbia Aircraft Mfg': 'Columbia', 'COLUMBIA AIRCRAFT MFG': 'Columbia', 'Columbia Aircraft Mfg.': 'Columbia', 'COMMANDER': 'Commander', 'Commander Aircraft': 'Commander', 'COMMANDER AIRCRAFT CO': 'Commander', 'Commander Aircraft Company': 'Commander', 'CONSOLIDATED AERONAUTICS': 'Consolidated Aero', 'Consolidated Aeronautics Inc.': 'Consolidated Aero', 'CONSOLIDATED AERONAUTICS INC.': 'Consolidated Aero', 'Consolidated Aeronautics, Inc': 'Consolidated Aero', 'Consolidated Aeronautics, Inc.': 'Consolidated Aero', 'CONSOLIDATED VULTEE': 'Consolidated Aero', 'Consolidated-vultee': 'Consolidated Aero', 'CONVAIR': 'Convair', 'Convair Div. Of Gen. Dynamics': 'Convair', 'COSTRUZIONI AERONAUTICHE TECNA': 'Costruzioni', 'Costruzioni Aeronautiche': 'Costruzioni', 'Costruzioni AeronauticheTecnam': 'Costruzioni', 'CUB CRAFTER': 'Cub Crafters', 'CUB CRAFTERS': 'Cub Crafters', 'CUB CRAFTERS INC': 'Cub Crafters', 'Cub Crafters Inc': 'Cub Crafters', 'Cub Crafters Inc.': 'Cub Crafters', 'Cub Crafters, Inc.': 'Cub Crafters', 'Cubcrafter': 'Cub Crafters', 'Cubcrafters': 'Cub Crafters', 'CUBCRAFTERS': 'Cub Crafters', 'CubCrafters': 'Cub Crafters', 'CUBCRAFTERS INC': 'Cub Crafters', 'CubCrafters Inc': 'Cub Crafters', 'Cubcrafters, Inc': 'Cub Crafters', 'CubCrafters, Inc': 'Cub Crafters', 'CULVER': 'Culver', 'CULVER GLENN': 'Culver', 'Culver-revolution': 'Culver', 'Culver, Aurther L.': 'Culver', 'CURTIS JOHN P': 'Curtiss Wright', 'Curtis-travel Air': 'Curtiss Wright', 'Curtis-wright': 'Curtiss Wright', 'CURTISS': 'Curtiss Wright', 'CURTISS WRIGHT': 'Curtiss Wright', 'Curtiss-wright': 'Curtiss Wright', 'Curtiss-Wright': 'Curtiss Wright', 'CZECH': 'Czech Aircraft Works', 'CZECH AIRCRAFT WORKS': 'Czech Aircraft Works', 'CZECH AIRCRAFT WORKS SPOL SRO': 'Czech Aircraft Works', 'Czech Aircraft Works SPOL SRO': 'Czech Aircraft Works', 'Czech Aircraft Works Spol Sro': 'Czech Aircraft Works', 'Czech Sport Aircraft': 'Czech Sport', 'CZECH SPORT AIRCRAFT A S': 'Czech Sport', 'Czech Sport Aircraft a.s.': 'Czech Sport', 'Czech Sport Aircraft AS': 'Czech Sport', 'CZECH SPORT AIRCRAFT AS': 'Czech Sport', 'CZECH SPORTPLANES SRO': 'Czech Sport'
+
+
+
+
+'DASSAULT': 'Dassault', 'Dassault Aviation': 'Dassault', 'DASSAULT AVIATION': 'Dassault', 'Dassault Falcon': 'Dassault', 'Dassault-breguet': 'Dassault', 'DASSAULT-BREGUET': 'Dassault', 'Dassault-Breguet': 'Dassault', 'Dassault/sud': 'Dassault', 'DASSAULT/SUD': 'Dassault', 'DE HAVILLAND': 'de Havilland', 'De Havilland': 'de Havilland', 'Dehavilland': 'de Havilland', 'DEHAVILLAND': 'de Havilland', 'DeHavilland': 'de Havilland', 'DEHAVILLAND CANADA': 'de Havilland', 'DIAMOND': 'Diamond', 'Diamond Aicraft Industries Inc': 'Diamond', 'Diamond Aircraft': 'Diamond', 'DIAMOND AIRCRAFT': 'Diamond', 'DIAMOND AIRCRAFT IND GMBH': 'Diamond', 'Diamond Aircraft Industries': 'Diamond', 'DIAMOND AIRCRAFT INDUSTRIES': 'Diamond', 'DIAMOND AIRCRAFT INDUSTRIES IN': 'Diamond', 'Diamond Aircraft Industry Inc': 'Diamond', 'DORNIER': 'Dornier', 'DORNIER GMBH': 'Dornier', 'DOUGLAS': 'Douglas', 'DOWNER': 'Downer', 'Downer Aircraft Industries': 'Downer'
+
+
+
+'EAGLE': 'Eagle', 'Eagle (ultralight)': 'Eagle', 'EAGLE AIRCRAFT CO': 'Eagle', 'Eagle Aircraft Co.': 'Eagle', 'ECLIPSE AVIATION': 'Eclipse Aviation', 'ECLIPSE AVIATION CORP': 'Eclipse Aviation', 'Eclipse Aviation Corporation': 'Eclipse Aviation', 'EDGE': 'Edge', 'EIPPER': 'Eipper', 'Eipper Formance': 'Eipper', 'EIPPER FORMANCE INC': 'Eipper', 'Eipper Mx Ii Quicksilver': 'Eipper', 'Eipper Quicksilver': 'Eipper', 'Eipper Quicksiver E': 'Eipper', 'Eipper-formance': 'Eipper', 'EMBRAER': 'Embraer', 'Embraer Aircraft': 'Embraer', 'EMBRAER EXECUTIVE AIRCRAFT INC': 'Embraer', 'EMBRAER S A': 'Embraer', 'EMBRAER-EMPRESA BRASILEIRA DE': 'Embraer', 'ENGINEERING & RESEARCH': 'Engineering & Research', 'Engineering and Research': 'Engineering & Research', 'ENSTROM': 'Enstrom', 'ENSTROM HELICOPTER CORP': 'Enstrom', 'ERCOUPE': 'Ercoupe', 'Ercoupe (eng & Research Corp.)': 'Ercoupe', 'EUROCOPTER': 'Eurocopter', 'Eurocopter Deutsch': 'Eurocopter', 'Eurocopter Deutschland': 'Eurocopter', 'Eurocopter Deutschland Gmbh': 'Eurocopter', 'EUROCOPTER DEUTSCHLAND GMBH': 'Eurocopter', 'Eurocopter France': 'Eurocopter', 'EUROCOPTER FRANCE': 'Eurocopter', 'EUROPA': 'Europa', 'Europa Aviation Inc': 'Europa', 'EVEKTOR AEROTECHNIK': 'Evektor Aerotechnik', 'Evektor Aerotechnik': 'Evektor Aerotechnik', 'Evektor Aerotechnik AS': 'Evektor Aerotechnik', 'Evektor-aerotechnik': 'Evektor Aerotechnik', 'Evektor-aerotechnik A.s.': 'Evektor Aerotechnik', 'Evektor-aerotechnik As': 'Evektor Aerotechnik', 'EVEKTOR-AEROTECHNIK AS': 'Evektor Aerotechnik', 'Evektor-Aerotechnik AS': 'Evektor Aerotechnik', 'EXTRA': 'Extra', 'Extra Flugzeugbau': 'Extra', 'EXTRA FLUGZEUGBAU': 'Extra', 'Extra Flugzeugbau Gmbh': 'Extra', 'EXTRA FLUGZEUGBAU GMBH': 'Extra', 'EXTRA Flugzeugproduktions-GMBH': 'Extra', 'Extra Flugzeugproduktions-und': 'Extra', 'EXTRA FLUGZEUGPRODUKTIONS-UND': 'Extra', 'Extra Flugzeugrau Gmbh': 'Extra'
+
+
+
+
+
+'FAIRCHILD': 'Fairchild', 'Fairchild Industries': 'Fairchild', 'Fairchild Swearingen': 'Fairchild', 'Fairchild/swearingen': 'Fairchild', 'FAIRCHILD(HOWARD)': 'Fairchild', 'Fairchild Heli-porter': 'Fairchild', 'FAIRCHILD HELI-PORTER': 'Fairchild', 'Fairchild-heliporter': 'Fairchild', 'FAIRCHILD HILLER': 'Fairchild Hiller', 'FANTASY AIR': 'Fantasy Air', 'FANTASY AIR SRO': 'Fantasy Air', 'Fantasy Sky Promotions': 'Fantasy Air', 'FIELDS': 'Fields', 'FISHER': 'Fisher', 'Fischer': 'Fisher', 'Fisher Aero': 'Fisher', 'Fisher Flying Products': 'Fisher', 'FISHER FLYING PRODUCTS': 'Fisher', 'FISHER HAROLD R': 'Fisher', 'FISHER MICHAEL E': 'Fisher', 'FISHER MICHAEL H': 'Fisher', 'FLEET': 'Fleet', 'FLIGHT DESIGN': 'Flight Design', 'FLIGHT DESIGN GENERAL AVN GMBH': 'Flight Design', 'Flight Design Gmbh': 'Flight Design', 'FLIGHT DESIGN GMBH': 'Flight Design', 'Flight Design GMBH': 'Flight Design', 'Flight Star': 'Flightstar', 'FLIGHTSTAR': 'Flightstar', 'FLIGHTstar': 'Flightstar', 'FLIGHTSTAR INC': 'Flightstar', 'FLIGHTSTAR SPORTPLANES': 'Flightstar', 'Flightstar Sportplanes': 'Flightstar', 'FOKKER': 'Fokker', 'FOUND ACFT CANADA INC': 'Found Aircraft Canada', 'Found Acft': 'Found Aircraft Canada', 'Found Aircraft Canada Inc': 'Found Aircraft Canada'
+
+
+
+
+'GARLICK': 'Garlick', 'Garlick Helicipters Inc.': 'Garlick', 'GARLICK HELICOPTERS INC': 'Garlick', 'Garlick Helicopters Inc.': 'Garlick', 'Gates Lear Jet': 'Gates Learjet', 'GATES LEAR JET': 'Gates Learjet', 'GATES LEAR JET CORP.': 'Gates Learjet', 'GATES LEARJET': 'Gates Learjet', 'GATES LEARJET CORP': 'Gates Learjet', 'GATES LEARJET CORP.': 'Gates Learjet', 'Gates Learjet Corporation':'Gates Learjet', 'GENERAL ATOMICS': 'General Atomics', 'GLASAIR': 'Glasair', 'Glasair Aviation LLC': 'Glasair', 'GLASAIR AVIATION USA LLC': 'Glasair', 'Glasair Iii': 'Glasair', 'Glassair': 'Glasair', 'Glassair Iii': 'Glasair', 'GLOBE': 'Globe', 'Globe Swift': 'Globe', 'GREAT LAKES': 'Great Lakes', 'Great Lakes Adams': 'Great Lakes', 'Great Lakes Aircraft Company': 'Great Lakes', 'GRUMMAN': 'Grumman', 'Grumman Acft Eng': 'Grumman', 'GRUMMAN ACFT ENG COR': 'Grumman', 'GRUMMAN ACFT ENG COR-SCHWEIZER': 'Grumman', 'GRUMMAN AIRCRAFT': 'Grumman', 'GRUMMAN AIRCRAFT COR-SCHWEIZER': 'Grumman', 'GRUMMAN AIRCRAFT ENG CORP': 'Grumman', 'Grumman American': 'Grumman', 'GRUMMAN AMERICAN': 'Grumman', 'Grumman American Aviation': 'Grumman', 'GRUMMAN AMERICAN AVIATION CORP': 'Grumman', 'GRUMMAN AMERICAN AVN. CORP': 'Grumman', 'Grumman American Avn. Corp.': 'Grumman', 'GRUMMAN AMERICAN AVN. CORP.': 'Grumman', 'GRUMMAN American Corporation': 'Grumman', 'Grumman Schweizer': 'Grumman', 'GRUMMAN SCHWEIZER': 'Grumman', 'Grumman-schweizer': 'Grumman', 'Grumman-Schweizer': 'Grumman', 'GULFSTREAM': 'Gulfstream', 'Gulfstream Aerospace': 'Gulfstream', 'GULFSTREAM AEROSPACE': 'Gulfstream', 'Gulfstream Aerospace Corp': 'Gulfstream', 'Gulfstream Aerospace Corp.': 'Gulfstream', 'Gulfstream Aerospace LP': 'Gulfstream', 'GULFSTREAM AM CORP COMM DIV': 'Gulfstream', 'Gulfstream American': 'Gulfstream', 'Gulfstream American Corp': 'Gulfstream', 'GULFSTREAM AMERICAN CORP': 'Gulfstream', 'Gulfstream American Corp.': 'Gulfstream', 'GULFSTREAM AMERICAN CORP.': 'Gulfstream', 'GULFSTREAM SCHWEIZER A/C CORP': 'Gulfstream', 'Gulfstream-schweizer': 'Gulfstream', 'GULFSTREAM-SCHWEIZER': 'Gulfstream'
+
+
+
+'HALL': 'Hall', 'Hall Christen Eagle': 'Hall', 'HALL DON H': 'Hall', 'HALL JEFFREY': 'Hall', 'HALL STEVEN C': 'Hall', 'HALL TERRENCE / HALL CATHIE': 'Hall', 'HALL THOMAS K': 'Hall', 'Hall-cavalier': 'Hall', 'HALL, WENDALL W': 'Hall', 'Hamilton Stoddard': 'Hamilton', 'HAWKER': 'Beech', 'HAWKER AIRCRAFT LTD': 'Beech', 'Hawker Aircraft Ltd': 'Beech', 'Hawker Aircraft Ltd.': 'Beech', 'Hawker Beech': 'Beech', 'HAWKER BEECH': 'Beech', 'Hawker Beechcraft': 'Beech', 'HAWKER BEECHCRAFT': 'Beech', 'HAWKER BEECHCRAFT CORP': 'Beech', 'Hawker Beechcraft Corp.': 'Beech', 'Hawker Beechcraft Corporation': 'Beech', 'HAWKER BEECHCRAFT CORPORATION': 'Beech', 'Hawker Siddeley': 'Hawker', 'HAWKER SIDDELEY': 'Hawker', 'Hawker Siddely': 'Hawker', 'Hawker-beechcraft': 'Beech', 'Hawker-Beechcraft': 'Beech', 'Hawker-Beechcraft Corporation': 'Beech', 'Helie': 'Helio', 'HELIO': 'Helio', 'Helio Aircraft Ltd': 'Helio', 'HILLER': 'Hiller', 'Hiller-osborn': 'Hiller', 'HILLER-ROGERSON HELICOPTER': 'Hiller', 'Hiller-soloy': 'Hiller', 'HILLER-TRI-PLEX IND.INC.': 'Hiller', 'HONDA AIRCRAFT': 'Honda Aircraft', 'HONDA AIRCRAFT CO LLC': 'Honda Aircraft', 'Honda Jet': 'Honda Aircraft', 'HOWARD AIRCRAFT': 'Howard Aircraft', 'Howard Aircraft Corp.': 'Howard Aircraft', 'HUGHES': 'Hughes', 'HUGHES HELICOPTERS INC': 'Hughes', 'HUGHES/HELICOPTER ASSOCS INC': 'Hughes', 
+'HUNTER': 'Hunter', 'HUNTER GEORGE': 'Hunter'
+
+
+
+
+'ICON': 'Icon', 'ICON AIRCRAFT INC': 'Icon', 'INTERPLANE': 'Interplane', 'Interplane Llc': 'Interplane', 'INTERPLANE S R O': 'Interplane', 'Interplane Sro': 'Interplane', 'INTERSTATE': 'Interstate', 'ISRAEL AEROSPACE INDUSTRIESLTD': 'Israel Aircraft Industries', 'ISRAEL AIRCRAFT INDUSTRIES': 'Israel Aircraft Industries'
+
+
+
+
+'JABIRU': 'Jabiru Aircraft', 'JABIRU AIRCRAFT PTY LTD': 'Jabiru Aircraft', 'JABIRU USA SPORT AIRCRAFT': 'Jabiru Aircraft', 'JABIRU USA SPORT AIRCRAFT LLC': 'Jabiru Aircraft', 'JABIRU USA SPORT AIRCRAFT, LLC': 'Jabiru Aircraft', 'JACKSON': 'Jackson', 'JACKSON DENNIS': 'Jackson', 'JACKSON FRED M': 'Jackson', 'JACKSON JEREMIAH D': 'Jackson', 'JONES': 'Jones', 'JONES KENT C': 'Jones', 'JONES PETER M': 'Jones', 'JONES RALPH D': 'Jones', 'JONES RODNEY V': 'Jones', 'JONES RONALD C': 'Jones', 'JUST': 'Just', 'JUST AIRCRAFT': 'Just', 'Just Aircraft Llc': 'Just', 'JUST AIRCRAFT LLC': 'Just', 'Just Aircraft LLC': 'Just'
+
+
+
+
+'KAMAN': 'Kaman', 'KAMAN AEROSPACE CORP': 'Kaman', 'KITFOX': 'Kitfox', 'Kitfox IV': 'Kitfox', 'Kitfox Ten, Inc': 'Kitfox', 'KOLB': 'Kolb', 'KOLB AIRCRAFT CO': 'Kolb', 'KOLB AIRCRAFT INC': 'Kolb', 'Kolb Company': 'Kolb', 'Kolb Twin Star': 'Kolb'
+
+
+
+
+
+'LAKE': 'Lake', 'Lake John K': 'Lake', 'LANCAIR': 'Lancair', 'Lancair Company': 'Lancair', 'LANCAIR COMPANY': 'Lancair', 'Lanceair': 'Lancair', 'LARSEN': 'Larsen', 'Larsen Charles Bennett': 'Larsen', 'Larson': 'Larsen', 'LARSON': 'Larsen', 'LARSON KEN W': 'Larsen', 'LARSON ROGER H': 'Larsen', 'Larson Smith Miniplane': 'Larsen', 'Larson, C.h.': 'Larsen', 'LEARJET': 'Learjet', 'LEARJET INC': 'Learjet', 'Learjet Inc': 'Learjet', 'LET': 'Let', 'LIBERTY AEROSPACE INCORPORATED': 'Liberty', 'LIBERTY AEROSPACE': 'Liberty', 'Liberty Aerospace': 'Liberty', 'Liberty Aerospace Inc.': 'Liberty', 'Liberty Aerospace Incorporate': 'Liberty', 'Liberty Aerospace, Inc.': 'Liberty', 'LINDSTRAND': 'Lindstrand', 'Lindstrand Balloons': 'Lindstrand', 'LINDSTRAND BALLOONS': 'Lindstrand', 'LINDSTRAND BALLOONS USA': 'Lindstrand', 'LINSTRAND': 'Lindstrand', 'LOCKHEED': 'Lockheed', 'Lockheed-martin': 'Lockheed', 'LOCKWOOD': 'Lockwood', 'LOCKWOOD AIRCRAFT CORP': 'Lockwood', 'LONG': 'Long', 'Long E-z-e': 'Long', 'Long Pitts': 'Long', 'Long-ez': 'Long', 'Longjev': 'Long', 'LUSCOMBE': 'Luscombe', 'Luscombe Silvaire Aircraft Co.': 'Luscombe'
+
+
+
+
+'MARTIN CHARLES A': 'Martin', 'Martin Company': 'Martin', 'MARTIN CURTIS': 'Martin', 'MARTIN EDWARD H': 'Martin', 'Martin-pitts': 'Martin', 'Martin/harris': 'Martin', 'MAULE': 'Maule', 'Maule Air Inc.': 'Maule', 'MAULE AIRCRAFT CORP': 'Maule', 'MAXAIR': 'Maxair', 'Maxair Aircraft Corp.': 'Maxair', 'MAXAIR DRIFTER': 'Maxair', 'MCCLISH': 'McClish', 'Mcclish': 'McClish', 'Mcdonald': 'Mcdonnell Douglas', 'Mcdonald Douglas': 'Mcdonnell Douglas', 'MCDONNELL DOUGLAS': 'Mcdonnell Douglas', 'MCDONNELL DOUGLAS AIRCRAFT CO': 'Mcdonnell Douglas', 'MCDONNELL DOUGLAS CORPORATION': 'Mcdonnell Douglas', 'Mcdonnell-douglas': 'Mcdonnell Douglas', 'MCDONNELL DOUGLAS HELI CO': 'Mcdonnell Douglas Helicopter', 'MCDONNELL DOUGLAS HELICOPTER': 'Mcdonnell Douglas Helicopter', 'McDonnell Douglas Helicopter C': 'Mcdonnell Douglas Helicopter', 'Mcdonnell Douglas Helicopters': 'Mcdonnell Douglas Helicopter', 'McDonnell Douglas Helicopters': 'Mcdonnell Douglas Helicopter', 'MD HELICOPTER': 'Md Helicopter', 'MD Helicopter Inc': 'Md Helicopter', 'MD Helicopters Inc': 'Md Helicopter', 'MD HELICOPTER INC': 'Md Helicopter', 'Md Helicopter Inc.': 'Md Helicopter', 'Md Helicopters': 'Md Helicopter', 'MD HELICOPTERS': 'Md Helicopter', 'MD HELICOPTERS INC': 'Md Helicopter', 'Md Helicopters Inc.': 'Md Helicopter', 'Md Helicopters, Inc.': 'Md Helicopter', 'MD HELICOPTERS, INC.': 'Md Helicopter', 'Messerschmitt-boelkow-blohm': 'Messerschmitt', 'MESSERSCHMITT-BOELKOW-BLOHM': 'Messerschmitt', 'Messerschmitt-bolkow-blohm': 'Messerschmitt', 'MESSERSCHMITT-BOLKOW-BLOHM': 'Messerschmitt', 'MEYER': 'Meyer', 'MEYERS': 'Meyers', 'Meyers Aircraft Co.': 'Meyers', 'MEYERS INDUSTRIES INC': 'Meyers', 'MILLER': 'Miller', 'Miller Air Sports': 'Miller', 'Mitchell Aircraft Corp': 'Mitchell', 'MITSUBISHI': 'Mitsubishi', 'MONOCOUPE': 'Monocoupe', 'Monocoupe Aircraft': 'Monocoupe', 'MOONEY': 'Mooney', 'Mooney Aircraft': 'Mooney', 'Mooney Aircraft Corp': 'Mooney', 'MOONEY AIRCRAFT CORP.': 'Mooney', 'Mooney Aircraft Corporation': 'Mooney', 'MOONEY AIRPLANE CO INC': 'Mooney', 'MOONEY AIRPLANE COMPANY, INC.': 'Mooney', 'MOONEY INTERNATIONAL CORP': 'Mooney', 'MOORE': 'Moore', 'MORAVAN': 'Moravan', 'MORRISEY': 'Morrisey', 'MORRISON': 'Morrison', 'Murphy Aircraft': 'Murphy', 'Murphy Aircraft Mfg, Ltd.': 'Murphy', 'Murphy-charles': 'Murphy', 'Murphey': 'Murphy', 'MYERS': 'Myers'
+
+
+
+'NANCHANG': 'Nanchang', 'Nanchang China': 'Nanchang', 'NANCHANG CHINA': 'Nanchang', 'NAVAL AIRCRAFT FACTORY': 'Naval Aircraft Factory', 'Navy': 'Naval Aircraft Factory', 'NAVION': 'Navion', 'NELSON': 'Nelson', 'Nelson/nelson': 'Nelson', 'New Glasair': 'Glasair', 'NEW KOLB AIRCRAFT CO': 'Kolb', 'NEW KOLB AIRCRAFT CO LLC': 'Kolb', 'New Piper': 'Piper', 'NEW PIPER': 'Piper', 'NEW PIPER AIRCRAFT INC': 'Piper', 'New Piper Aircraft, Inc.': 'Piper', 'NEW STANDARD': 'New Standard', 'NORD': 'Nord', 'Nord (sncan)': 'Nord', 'Nord Aviation': 'Nord', 'NORTH AMERICAN': 'North American', 'North American Aviation Div.': 'North American', 'North American Rockwell': 'North American', 'North American Rockwell Corp.': 'North American', 'NORTH AMERICAN-MEDORE': 'North American', 'North American/aero Classics': 'North American', 'North American-aero Classics': 'North American', 'North American-barene': 'North American', 'North American-kenney': 'North American', 'North American-maslon': 'North American', 'NORTH AMERICAN/AERO CLASSICS': 'North American', 'NORTH AMERICAN/SCHWAMM': 'North American', 'NORTH AMERICAN/VICTORIA MNT LT': 'North American', 'NORTH WING': 'North Wing', 'NORTH WING DESIGN': 'North Wing', 'NORTH WING UUM INC': 'North Wing', 'North Wing UUM INC': 'North Wing', 'NORTH WING UUM INC.': 'North Wing', 'NORTHROP': 'Northrop', 'NORTHWING': 'Northwing', 'Northwing Design': 'Northwing', 'NORTHWING DESIGN': 'Northwing'
+
+
+
+
+'PACIFIC AEROSPACE CORP LTD': 'Pacific Aerospace', 'PIAGGIO': 'Piaggio', 'Piaggio Aero Industries S.p.a.': 'Piaggio', 'PIAGGIO AERO INDUSTRIES SPA': 'Piaggio', 'Piaggio Industrie': 'Piaggio', 'PIETENPOL': 'Pietenpol', 'Pietenpol-grega': 'Pietenpol', 'PILATUS': 'Pilatus', 'Pilatus Aircraft': 'Pilatus', 'PILATUS AIRCRAFT LTD': 'Pilatus', 'Pilatus Britten-norman': 'Pilatus', 'PILATUS BRITTEN-NORMAN': 'Pilatus', 'PIPER': 'Piper', 'PIPER / LAUDEMAN': 'Piper', 'Piper Aerostar': 'Piper', 'Piper Aircraft': 'Piper', 'PIPER AIRCRAFT': 'Piper', 'PIPER AIRCRAFT CORPORATION': 'Piper', 'Piper Aircraft Corporation': 'Piper', 'PIPER AIRCRAFT INC': 'Piper', 'PIPER AIRCRAFT, INC.': 'Piper', 'Piper Aircraft, Inc.': 'Piper', 'Piper Cub Crafters': 'Piper', 'Piper Pawnee': 'Piper', 'Piper-aerostar': 'Piper', 'PIPER-HARRIS': 'Piper', 'Piper/cub Crafters': 'Piper', 'PIPER/CUB CRAFTERS': 'Piper', 'Piper/Cub Crafters': 'Piper', 'Piper/stevens': 'Piper', 'PIPER/WALLY\'S FLYERS INC': 'Piper', 'PIPISTREL': 'Pipistrel', 'PIPISTREL D O O': 'Pipistrel', 'PIPISTREL DOO AJDOVSCINA': 'Pipistrel', 'PIPISTREL ITALIA S R L': 'Pipistrel', 'Pipistrel Italia SRL': 'Pipistrel', 'PITCAIRN': 'Pitcairn', 'PITTS': 'Pitts', 'PITTS AEROBATICS': 'Pitts', 'Pitts Special': 'Pitts', 'PITTS SPECIAL': 'Pitts', 'Pitts Spl.': 'Pitts', 'PROGRESSIVE AERODYNE INC': 'Progressive Aerodyne', 'Progressive Aerodyne Inc.': 'Progressive Aerodyne', 'PZL BIELSKO': 'PZL', 'PZL MIELEC': 'PZL', 'PZL OKECIE': 'PZL', 'Pzl Okecie': 'PZL', 'Pzl Swidnik': 'PZL', 'PZL SWIDNIK': 'PZL', 'PZL Warszawa-Okecie': 'PZL', 'Pzl Warzawa-cnpsl': 'PZL', 'Pzl Warzawa-okecie': 'PZL', 'Pzl-bielsko': 'PZL', 'PZL-BIELSKO': 'PZL', 'Pzl-mielec': 'PZL', 'Pzl-okecie': 'PZL', 'Pzl-swidnik': 'PZL', 'PZL-Swidnik': 'PZL', 'PZL-SWIDNIK': 'PZL'
+
+
+
+
+'QUAD CITY': 'Quad City', 'Quad City Aircraft': 'Quad City', 'Quad City Aircraft Corp': 'Quad City', 'Quad City Ultralight': 'Quad City', 'QUAD CITY ULTRALIGHT ACFT CORP': 'Quad City', 'Quad City Ultralight Aircraft': 'Quad City', 'QUAD CITY ULTRALIGHT CORP': 'Quad City', 'Quad City Ultralight, Llc': 'Quad City', 'QUAD CITY ULTRALIGHTS': 'Quad City', 'Quadcity': 'Quad City', 'QUEST': 'Quest', 'QUEST Aircraft Company': 'Quest', 'QUEST AIRCRAFT COMPANY LLC': 'Quest', 'QUESTAIR INC': 'Questair', 'Questair, Inc.': 'Questair', 'Questaire': 'Questair', 'QUICKIE': 'Quickie', 'Quickie Aircraft': 'Quickie', 'Quickie-myers': 'Quickie', 'Quick Silver': 'Quicksilver', 'QUICKSILVER': 'Quicksilver', 'Quicksilver Aircraft': 'Quicksilver', 'QUICKSILVER AIRCRAFT': 'Quicksilver', 'QUICKSILVER AIRCRAFT CO': 'Quicksilver', 'Quicksilver Aircraft Northeast': 'Quicksilver', 'QUICKSILVER EIPPER ACFT INC': 'Quicksilver', 'QUICKSILVER ENTERPRISES INC': 'Quicksilver', 'Quicksilver II': 'Quicksilver', 'Quicksilver Manufacturing': 'Quicksilver', 'QUICKSILVER MANUFACTURING INC': 'Quicksilver', 'QUICKSILVER MFG': 'Quicksilver', 'Quiksilver': 'Quicksilver'
+
+
+
+
+'RANS': 'Rans', 'RANS AIRCRAFT': 'Rans', 'Rans Company': 'Rans', 'RANS DESIGNS INC': 'Rans', 'Rans Employee Flying Club': 'Rans', 'RANS EMPLOYEE FLYING CLUB': 'Rans', 'RANS INC': 'Rans', 'Rans Inc.': 'Rans', 'RANS S-12': 'Rans', 'Rans S-12 Airaile': 'Rans', 'Rans, Inc.': 'Rans', 'Rans/hine': 'Rans', 'Raven Industries': 'Raven', 'RAVEN INDUSTRIES INC': 'Raven', 'RAYTHEON': 'Raytheon', 'Raytheon Aircraft Company': 'Raytheon', 'RAYTHEON AIRCRAFT COMPANY': 'Raytheon', 'Raytheon Co': 'Raytheon', 'RAYTHEON COMPANY': 'Raytheon', 'Raytheon Corporate Jets': 'Raytheon', 'RAYTHEON CORPORATE JETS INC': 'Raytheon', 'REIMS': 'Reims', 'REims': 'Reims', 'Reims Aviation': 'Reims', 'Reims Aviation Cessna': 'Reims', 'REIMS AVIATION S.A.': 'Reims', 'REIMS AVIATION SA': 'Reims', 'Reims-Cessna': 'Reims', 'REIMS-CESSNA': 'Reims', 'REMOS ACFT GMBH FLUGZEUGBAU': 'Remos', 'Remos Aircraft GmbH': 'Remos', 'REMOS AIRCRAFT GMBH': 'Remos', 'Remos Aircraft GMBH': 'Remos', 'Remos Aircraft GMBH Flugzeugba': 'Remos', 'REMOS AIRCRAFT GMBH FLUGZEUGBA': 'Remos', 'REPUBLIC': 'Republic', 'ROBIN': 'Robin', 'ROBINSON': 'Robinson', 'Robinson Helicopter': 'Robinson', 'ROBINSON HELICOPTER': 'Robinson', 'ROBINSON HELICOPTER CO': 'Robinson', 'ROBINSON HELICOPTER CO INC': 'Robinson', 'Robinson Helicopter Co.': 'Robinson', 'Robinson Helicopter Company': 'Robinson', 'ROBINSON HELICOPTER COMPANY': 'Robinson', 'Robinson Helicopters': 'Robinson', 'ROCKWELL': 'Rockwell', 'Rockwell Comdr': 'Rockwell', 'Rockwell Commander': 'Rockwell', 'ROCKWELL COMMANDER': 'Rockwell', 'Rockwell Int\'t': 'Rockwell', 'Rockwell International': 'Rockwell', 'ROCKWELL INTERNATIONAL': 'Rockwell', 'Rockwell Intl': 'Rockwell', 'ROGERS': 'Rogers', 'ROLLADEN-SCHNEIDER': 'Rolladen Schneider', 'ROLLADEN SCHNEIDER OHG': 'Rolladen Schneider', 'Rolladen-schneider': 'Rolladen Schneider', 'Rolladen-schneider Gmbh': 'Rolladen Schneider', 'ROLLADEN-SCHNEIDER GMBH': 'Rolladen Schneider', 'ROLLADEN-SCHNEIDER OHG': 'Rolladen Schneider', 'Roof': 'Root', 'Root, Arthur T.': 'Root', 'ROSE': 'Rose', 'ROSE HERBERT D': 'Rose', 'Rose Rhinehart': 'Rose', 'Rose Wesley': 'Rose', 'Rose-Rhinehart': 'Rose', 'ROSS ALFRED K/ONEILL TERRENCE': 'Ross', 'ROSS H/HERRIOTT M': 'Ross', 'ROSS JONATHAN': 'Ross', 'Ross/stonecipher': 'Ross', 'ROTORWAY': 'Rotorway', 'Rotorway Aircraft, Inc.': 'Rotorway', 'Rotorway Executive': 'Rotorway', 'Rotoway International': 'Rotorway', 'RUTAN': 'Rutan', 'Rutan Aircraft Factory': 'Rutan', 'RYAN': 'Ryan', 'Ryan Aeronautical': 'Ryan', 'RYAN AERONAUTICAL': 'Ryan', 'Ryan Aeronautics': 'Ryan', 'RYAN JOHN STEFFEY': 'Ryan', 'RYAN W Gross': 'Ryan', 'Ryan-navion': 'Ryan'
+
+
+
+
+'SAAB': 'Saab', 'Saab-fairchild': 'Saab', 'Saab-scania': 'Saab', 'SAAB-SCANIA': 'Saab', 'SAAB-SCANIA AB': 'Saab', 'Saab-scania Ab (saab)': 'Saab', 'Saab-Scania AB (Saab)': 'Saab', 'SCHWEIZER': 'Schweizer', 'Schweizer 300CBi': 'Schweizer', 'Schweizer Aircraft Corp': 'Schweizer', 'SCHWEIZER AIRCRAFT CORP': 'Schweizer', 'Schweizer Aircraft Corp.': 'Schweizer', 'Schweizer Sgs': 'Schweizer', 'Schweizer, N36289': 'Schweizer', 'SCHWEIZER(HUGHES)': 'Schweizer', 'SCHWEIZER(HUGHES)AIRCRAFT CORP': 'Schweizer', 'Scottish': 'Scottish Aviation', 'SCOTTISH AVIATION': 'Scottish Aviation', 'SHORT': 'Short', 'SHORT BROS': 'Short', 'Short Bros.': 'Short', 'SHORT BROS. & HARLAND': 'Short', 'Short Brothers': 'Short', 'SHORT BROTHERS & HARLAND LTD.': 'Short', 'SHORT BROTHERS PLC': 'Short', 'SIAI MARCHETTI': 'Siai Marchetti', 'Siai-marchetti': 'Siai Marchetti', 'SIAI-MARCHETTI': 'Siai Marchetti', 'Siai-Marchetti': 'Siai Marchetti', 'SIKORSKY': 'Sikorsky', 'SIKORSKY AIRCRAFT CORP': 'Sikorsky', 'Sikorsky/orlando': 'Sikorsky', 'SILVAIRE': 'Silvaire', 'SKYKITS': 'Skykits', 'SKYKITS CORP': 'Skykits', 'Skykits Corporation': 'Skykits', 'SKYKITS USA CORP': 'Skykits', 'SMITH': 'Smith', 'Smith & R. Mathews': 'Smith', 'Smith Aerostar': 'Smith', 'SMITH ALBERT F': 'Smith', 'SMITH ALLEN': 'Smith', 'Smith Arthur Fox': 'Smith', 'SMITH BRET B': 'Smith', 'SMITH Capella': 'Smith', 'Smith Carter A': 'Smith', 'Smith Douglas J.': 'Smith', 'SMITH EDWARD I': 'Smith', 'Smith Mini': 'Smith', 'Smith Miniplane': 'Smith', 'SMITH MINIPLANE': 'Smith', 'SMITH VILAS': 'Smith', 'Smith Wylie Jay': 'Smith', 'Smith, Ted Aerostar': 'Smith', 'Smith/davis': 'Smith', 'SNOW': 'Snow', 'SOCATA': 'Socata', 'Socata-Groupe Aerospatiale': 'Socata', 'SONEX': 'Sonex', 'Sonex / John D. McCarter': 'Sonex', 'SONEX AIRCRAFT': 'Sonex', 'SONEX LIMITED': 'Sonex', 'SORENSEN': 'Sorensen', 'SORENSEN DANNY': 'Sorensen', 'SORENSEN DANNY S': 'Sorensen', 'SORENSON': 'Sorensen', 'Sorrel': 'Sorrell', 'Sorrell Aircraft': 'Sorrell', 'STANLEY': 'Stanley', 'STANLEY ARTHUR FREEMAN': 'Stanley', 'STANLEY B E': 'Stanley', 'STANLEY ERNIE SIGURD': 'Stanley', 'Stanley, Davey L': 'Stanley', 'STANTON': 'Stanton', 'Star Duster': 'Starduster', 'Star Duster Too': 'Starduster', 'Starduster Ii': 'Starduster', 'STARDUSTER II': 'Starduster', 'Starduster Too': 'Starduster', 'STAUDACHER AIRCRAFT INC': 'Staudacher', 'Staudacher Aircraft, Inc.': 'Staudacher', 'STAUDACHER HYDROPLANES': 'Staudacher', 'STAUDACHER JON': 'Staudacher', 'Staudaucher': 'Staudacher', 'STEARMAN': 'Stearman', 'STEARMAN AIRCRAFT': 'Stearman', 'STEELE': 'Steele', 'STEELE  JOHN J': 'Steele', 'STEELE RALPH BRUCE': 'Steele', 'STEELE SAMUEL D': 'Steele', 'STEEN': 'Steen', 'Steen Aero Lab': 'Steen', 'Steen Skybolt': 'Steen', 'STINSON': 'Stinson', 'Stits Aircraft': 'Stits', 'Stits Flut-r-bug': 'Stits', 'STITS FLUT-R-BUG': 'Stits', 'Stits Playboy': 'Stits', 'Stits-itrich': 'Stits', 'Stitts': 'Stits', 'STODDARD HAMILTON': 'Stoddard Hamilton', 'Stoddard-Hamilton': 'Stoddard Hamilton', 'STOL': 'Stol', 'Stol Aircraft': 'Stol', 'STOL Aircraft Corp': 'Stol', 'STOL LLC': 'Stol', 'STOLP STARDUSTER': 'Stolp Starduster', 'Stolp Starduster Corp.': 'Stolp Starduster', 'Stolp-adams': 'Stolp Starduster', 'Stolp-starduster Too': 'Stolp Starduster', 'SUKHOI': 'Sukhoi', 'SUTTON': 'Sutton', 'Sutton Tailwind': 'Sutton', 'SUTTON WILLIAM J': 'Sutton', 'SWANSON': 'Swanson', 'Swanson/bensen': 'Swanson', 'SWEARINGEN': 'Swearingen', 'Swearingen T R/masters W': 'Swearingen'
+
+
+
+'TAYLOR': 'Taylor', 'Taylor Air Command': 'Taylor', 'Taylor Lonsdale': 'Taylor', 'Taylor Smith': 'Taylor', 'Taylor Titch': 'Taylor', 'TAYLORCRAFT': 'Taylorcraft', 'Taylorcraft Aviation': 'Taylorcraft', 'TAYLORCRAFT AVIATION CORP': 'Taylorcraft', 'TAYLORCRAFT CORP': 'Taylorcraft', 'Taylorcraft Corporation': 'Taylorcraft', 'TECNAM': 'Tecnam', 'TEMCO': 'Temco', 'Temco Luscombe': 'Temco', 'TERATORN': 'Teratorn', 'Teratorn Acft Inc.': 'Teratorn', 'Teratorn Aircraft, Inc.': 'Teratorn', 'Teratron': 'Teratorn', 'TEXAS HELICOPTER CORP': 'Texas Helicopter', 'Texas Helicopter Corp.':'Texas Helicopter', 'Texas Helicopter Corporation': 'Texas Helicopter', 'TEXTRON AVIATION INC': 'Textron Aviation', 'Textron Aviation Inc': 'Textron Aviation', 'THE BOEING COMPANY': 'Boeing', 'THOMPSON': 'Thompson', 'THORP': 'Thorp', 'Thorp Aero, Inc.': 'Thorp', 'Thorpe': 'Thorp', 'THRUSH': 'Thrush', 'THRUSH AIRCRAFT INC': 'Thrush', 'Thrush Aircraft Inc.': 'Thrush', 'THRUSH AIRCRAFT LLC': 'Thrush', 'Thrush Aircraft, Inc.': 'Thrush', 'TITAN': 'Titan', 'TITAN AEROSPACE HOLDINGS INC': 'Titan', 'Titan Aircraft': 'Titan', 'TRAVEL AIR': 'Travel Air', 'TUPOLEV': 'Tupolev'
+
+
+
+
+
+'Univair Aircraft Corporation': 'Univair', 'UNIVAIR AIRCRAFT CORPORATION': 'Univair', 'Univar': 'Univair', 'UNIVERSAL': 'Universal', 'Universal Aircraft Industries': 'Universal', 'Universal Globe': 'Universal', 'Universal Moulded Pdts.': 'Universal', 'Universal Stinson': 'Universal', 'UNIVERSAL STINSON': 'Universal'
+
+
+
+
+
+'VANS': 'Vans', 'Vans Aircraft': 'Vans', 'Vans Aircraft Inc': 'Vans', 'VANS AIRCRAFT INC': 'Vans', 'Vans Aircraft, Inc.': 'Vans', 'VARGA AIRCRAFT CORP.': 'Varga', 'VELOCITY INC': 'Velocity', 'VICKERS': 'Vickers'
+
+
+
+'WACO': 'Waco', 'Waco Classic Aircraft': 'Waco', 'WACO CLASSIC AIRCRAFT': 'Waco', 'Waco Classic Aircraft Corp': 'Waco', 'WACO CLASSIC AIRCRAFT CORP': 'Waco', 'Waco Classic Aircraft Corp.': 'Waco', 'WEATHERLY': 'Weatherly', 'WEATHERLY AVIATION CO INC': 'Weatherly', 'Weatherly Aviation Company Inc': 'Weatherly', 'WEBER': 'Weber', 'WHEELER': 'Wheeler', 'Wheeler Acft. Co.': 'Wheeler', 'WHEELER C / WHEELER K': 'Wheeler', 'Wheeler Technology, Inc.': 'Wheeler', 'WHITTMAN': 'Whittman', 'Whittman Tailwind': 'Whittman', 'WILSON': 'Wilson', 'Wing Aircraft': 'Wing', 'Wing Aircraft Co.': 'Wing', 'WOOD': 'Wood', 'WSK PZL MIELEC': 'Wsk Pzl Mielec', 'Wsk Pzl Swidnik': 'Wsk Pzl Mielec', 'Wsk Pzl Warzawa-okecie': 'Wsk Pzl Mielec', 'Wsk Pzl-krosno': 'Wsk Pzl Mielec', 'WSK-MIELEC': 'Wsk Pzl Mielec', 'WSK-PZL MEILEC': 'Wsk Pzl Mielec', 'Wsk-pzl Mielec': 'Wsk Pzl Mielec', 'WSK-PZL WARZAWA-OKECIE': 'Wsk Pzl Mielec', 'Wsk-pzl Warzawaokecie': 'Wsk Pzl Mielec', 'WSL PZL': 'Wsk Pzl Mielec'
+
+
+
+
+'XTREMEAIR GMBH': 'Xtremeair GMBH'
+
+
+'YAKOVLEV': 'Yakovlev', 'YAKOVLEV/CHINNERY': 'Yakovlev', 'YAKOVLEV/DAY': 'Yakovlev'
+
+
+'ZENAIR': 'Zenair', 'ZENAIR LTD': 'Zenair', 'Zenair Zodiac': 'Zenair', 'ZENITH': 'Zenith', 'ZENITH ACFT CO': 'Zenith', 'ZENITH AIRCRAFT CO': 'Zenith', 'ZIMMERMAN': 'Zimmerman', 'ZIVKO AERONAUTICS INC': 'Zivko', 'Zivko Aeronautics': 'Zivko', 'Zivko Aeronautics Inc.': 'Zivko', 'ZLIN': 'Zlin', 'Zlin Aviation': 'Zlin', 'Zlin Aviation S.r.o.': 'Zlin'
+
+
+
+
+Helicopters
+Robinson	981
+BELL	573
+Bell	333
+Hughes	248
+Eurocopter	190
+Schweizer	115
+Aerospatiale	95
+Sikorsky	95
+Enstrom	91
+Hiller	68
+Md Helicopter	57
+Agusta	54
+Mcdonnell Douglas Helicopter	46
+Rotorway	26
+Garlick	21
+BELL HELICOPTER TEXTRON CANADA	21
+BELL HELICOPTER TEXTRON	21
+Airbus	20
+Airbus Helicopters	18
+Mcdonnell Douglas	15
+Texas Helicopter	14
+BRANTLY	13
+Messerschmitt	9
+Mbb	8
+American Eurocopter	7
+Kaman	6
+Fairchild Hiller	5
+Brantly Helicopter	4
+3
+Boeing	2
+PZL	2
+Smith	1
+Embraer	1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

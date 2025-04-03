@@ -1,0 +1,155 @@
+Content
+The NTSB aviation accident database contains information from 1962 through 2022 about civil aviation accidents and selected incidents within the United States, its territories and possessions, and in international waters. The dataset includes accident statistics involving numerous aircraft categories including airplanes, helicopters, balloons, blimps, etc.
+
+
+RangeIndex: 88889 entries, 0 to 88888
+Data columns (total 31 columns):
+ #   Column                  Non-Null Count  Dtype  	Type			Examples
+---  ------                  --------------  -----  
+ 0   Event.Id                88889 non-null  object 	string			20001218X45447
+ 1   Investigation.Type      88889 non-null  object 	categorical, string	Accident, Incident
+ 2   Accident.Number         88889 non-null  object 	string			LAX94LA336
+ 3   Event.Date              88889 non-null  object 	date			1962-07-19
+ 4   Location                88837 non-null  object 	string			MOOSE CREEK, ID; GULF OF MEXICO; 120 NM SSE OF M, FL
+ 5   Country                 88663 non-null  object 	string			United States
+ 6   Latitude                34382 non-null  object 	string			332739N
+ 7   Longitude               34373 non-null  object 	long. number		-81.878056
+ 8   Airport.Code            50132 non-null  object 	string			N58, JAX, T72, 5G6
+ 9   Airport.Name            52704 non-null  object 	string			JACKSONVILLE INTL
+ 10  Injury.Severity         87889 non-null  object 	categorical, string	Fatal(2), Non-Fatal, Fatal(4)
+ 11  Aircraft.damage         85695 non-null  object 	categorical, string	Destroyed, Substantial, Minor
+ 12  Aircraft.Category       32287 non-null  object 	categorical, string	Airplane, Helicopter, Balloon
+ 13  Registration.Number     87507 non-null  object 	string			NC6404, N5142R
+ 14  Make                    88826 non-null  object 	string			Stinson, Piper, Cessna
+ 15  Model                   88797 non-null  object 	string			108-3, PA24-180, 172M
+ 16  Amateur.Built           88787 non-null  object 	categorical, string	no, yes
+ 17  Number.of.Engines       82805 non-null  float64	number			1, 2
+ 18  Engine.Type             81793 non-null  object 	categorical, string	Reciprocating, Turbo Fan, Turbo Shaft
+ 19  FAR.Description         32023 non-null  object 	categorical, string	Part 91: General Aviation, Part 135: Air Taxi & Commuter
+ 20  Schedule                12582 non-null  object 	categorical, string	SCHD, NSCH, UNK
+ 21  Purpose.of.flight       82697 non-null  object 	categorical, string	Personal, Instructional, Unknown
+ 22  Air.carrier             16648 non-null  object 	string			Air Canada, Rocky Mountain Helicopters, In, Lang Air Service
+ 23  Total.Fatal.Injuries    77488 non-null  float64	number			0, 1, 2, 3
+ 24  Total.Serious.Injuries  76379 non-null  float64	number			0, 1, 2, 3
+ 25  Total.Minor.Injuries    76956 non-null  float64	number			0, 1, 2, 3
+ 26  Total.Uninjured         82977 non-null  float64	number			0, 1, 2, 3
+ 27  Weather.Condition       84397 non-null  object 	categorical, string	UNK (unknown), IMC, VMC, 
+ 28  Broad.phase.of.flight   61724 non-null  object 	categorical, string	Cruise, Unknown, Approach, Climb
+ 29  Report.Status           82505 non-null  object 	string			Probable Cause, The pilot's failure to maintain directional control during the landing roll.
+ 30  Publication.Date        75118 non-null  object 	date			19-09-1996, 26-02-2007, 12-09-2000
+dtypes: float64(5), object(26)
+
+
+
+Business Problem
+The company is interested in purchasing and operating airplanes for commercial and private enterprises, and require more information about the potential risks of aircraft. 
+
+Goals for analysis:
+    • Which aircraft are the lowest risk for the company to start this new business endeavor
+    • Translate findings into actionable insights that the business can use to help decide which aircraft to purchase.
+
+Clean the DataSet
+	- rename columns to remove dots as they may cause errors in Python (replace dots with dashes or underscores) 
+		df.columns = df.columns.str.replace('.', '_', regex=False)
+
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 88889 entries, 0 to 88888
+Data columns (total 31 columns):
+ #   Column                  Non-Null Count  Dtype  
+---  ------                  --------------  -----  
+ 0   Event_Id                88889 non-null  object 
+ 1   Investigation_Type      88889 non-null  object 
+ 2   Accident_Number         88889 non-null  object 
+ 3   Event_Date              88889 non-null  object 
+ 4   Location                88837 non-null  object 
+ 5   Country                 88663 non-null  object 
+ 6   Latitude                34382 non-null  object 
+ 7   Longitude               34373 non-null  object 
+ 8   Airport_Code            50132 non-null  object 
+ 9   Airport_Name            52704 non-null  object 
+ 10  Injury_Severity         87889 non-null  object 
+ 11  Aircraft_damage         85695 non-null  object 
+ 12  Aircraft_Category       32287 non-null  object 
+ 13  Registration_Number     87507 non-null  object 
+ 14  Make                    88826 non-null  object 
+ 15  Model                   88797 non-null  object 
+ 16  Amateur_Built           88787 non-null  object 
+ 17  Number_of_Engines       82805 non-null  float64
+ 18  Engine_Type             81793 non-null  object 
+ 19  FAR_Description         32023 non-null  object 
+ 20  Schedule                12582 non-null  object 
+ 21  Purpose_of_flight       82697 non-null  object 
+ 22  Air_carrier             16648 non-null  object 
+ 23  Total_Fatal_Injuries    77488 non-null  float64
+ 24  Total_Serious_Injuries  76379 non-null  float64
+ 25  Total_Minor_Injuries    76956 non-null  float64
+ 26  Total_Uninjured         82977 non-null  float64
+ 27  Weather_Condition       84397 non-null  object 
+ 28  Broad_phase_of_flight   61724 non-null  object 
+ 29  Report_Status           82505 non-null  object 
+ 30  Publication_Date        75118 non-null  object 
+dtypes: float64(5), object(26)
+memory usage: 21.0+ MB
+
+	- remove columns that are not relevent to the analysis being done
+		(Event_Id, Accident_Number, Latitude, Longitude, Registration_Number, Publication_Date)
+
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 88889 entries, 0 to 88888
+Data columns (total 25 columns):
+ #   Column                  Non-Null Count  Dtype  
+---  ------                  --------------  -----  
+ 0   Investigation_Type      88889 non-null  object 
+ 1   Event_Date              88889 non-null  object 
+ 2   Location                88837 non-null  object 
+ 3   Country                 88663 non-null  object 
+ 4   Airport_Code            50132 non-null  object 
+ 5   Airport_Name            52704 non-null  object 
+ 6   Injury_Severity         87889 non-null  object 
+ 7   Aircraft_damage         85695 non-null  object 
+ 8   Aircraft_Category       32287 non-null  object 
+ 9   Make                    88826 non-null  object 
+ 10  Model                   88797 non-null  object 
+ 11  Amateur_Built           88787 non-null  object 
+ 12  Number_of_Engines       82805 non-null  float64
+ 13  Engine_Type             81793 non-null  object 
+ 14  FAR_Description         32023 non-null  object 
+ 15  Schedule                12582 non-null  object 
+ 16  Purpose_of_flight       82697 non-null  object 
+ 17  Air_carrier             16648 non-null  object 
+ 18  Total_Fatal_Injuries    77488 non-null  float64
+ 19  Total_Serious_Injuries  76379 non-null  float64
+ 20  Total_Minor_Injuries    76956 non-null  float64
+ 21  Total_Uninjured         82977 non-null  float64
+ 22  Weather_Condition       84397 non-null  object 
+ 23  Broad_phase_of_flight   61724 non-null  object 
+ 24  Report_Status           82505 non-null  object 
+dtypes: float64(5), object(20)
+memory usage: 17.0+ MB
+
+
+Cleaning the Make column code snippets
+#Fill Nan values in Make first
+df['Make'] = df['Make'].fillna('')
+
+# Clean the Make column for misspellings, all caps issues, etc for 'A'
+make_column_name_replace_a = {'Ab Sportine Aviacija': 'Sportine Aviacija', 'AB SPORTINE AVIACIJA': 'Sportine Aviacija', 'SPORTINE AVIACIJA': 'Sportine Aviacija', 'Abrams/nuding': 'Abrams', 'ACRO': 'Acro Sport', 'Adams': 'Adams Balloon', 'ADAMS': 'Adams Balloon', 'ADAMS BALLOONS LLC': 'Adams Balloon', 'AERO COMMANDER': 'Aero Commander', 'AERO VODOCHODY': 'Aero Vodochody', 'AEROVODOCHODY': 'Aero Vodochody', 'Aero Vodochody Aero Works': 'Aero Vodochody', 'AEROFAB INC': 'Aerofab Inc.', 'AEROMOT': 'Aeromot', 'AERONCA': 'Aeronca', 'Aeronca Aircraft Corporation': 'Aeronca', 'AEROPRO CZ': 'Aeropro CZ', 'AEROS': 'Aeros', 'Aeros LTD': 'Aeros', 'AEROS LTD': 'Aeros', 'AEROSPATIALE': 'Aerospatiale', 'AEROSTAR': 'Aerostar', 'Aerostar International': 'Aerostar', 'AEROSTAR INTERNATIONAL': 'Aerostar', 'Aerostar International Inc': 'Aerostar', 'AEROSTAR INTERNATIONAL INC': 'Aerostar', 'Aerostar International Inc.': 'Aerostar', 'Aerostar International, Inc.': 'Aerostar', 'AEROTEK': 'Aerotek', 'Aerotek-pitts': 'Aerotek', 'AEROTEK INC': 'Aerotek', 'AGUSTA': 'Agusta', 'AGUSTA AEROSPACE CORP': 'Agusta', 'AGUSTA SPA': 'Agusta', 'Agusta Spa': 'Agusta', 'Agusta-bell': 'Agusta', 'Agusta/Westland': 'Agusta', 'AGUSTAWESTLAND': 'Agusta', 'AgustaWestland': 'Agusta', 'AgustadWestland': 'Agusta', 'AGUSTAWESTLAND PHILADELPHIA': 'Agusta', 'AGUSTAWESTLAND SPA': 'Agusta', 'AIR CREATION': 'Air Creation', 'Air Creations': 'Air Creation', 'AIR TRACTOR': 'Air Tractor', 'AIR TRACTOR INC': 'Air Tractor', 'Air Tractor Inc': 'Air Tractor', 'Air Tractor Inc.': 'Air Tractor', 'AIR TRACTOR INC.': 'Air Tractor', 'Air Tractor, Inc.': 'Air Tractor', 'Air Borne Windsports Pty. Ltd.': 'Airborne', 'AIRBORNE (AUSTRALIA)': 'Airborne', 'AIRBORNE AUSTRALIA': 'Airborne', 'AIRBORNE EXTREME LLC': 'Airborne', 'AirBorne WindSport': 'Airborne', 'Airborne Windsports': 'Airborne', 'AIRBORNE WINDSPORTS': 'Airborne', 'Airborne Windsports Ltd': 'Airborne', 'AIRBORNE WINDSPORTS PTY LTD': 'Airborne', 'Airborne Windsports PTY LTD': 'Airborne', 'AIRBORNE': 'Airborne', 'AIRBUS': 'Airbus', 'AIRBUS HELICOPTERS': 'Airbus Helicopters', 'AIRBUS HELICOPTER': 'Airbus Helicopters', 'Airbus Helicopters (Eurocopte': 'Airbus Helicopters', 'Airbus Helicopters Deutschland': 'Airbus Helicopters', 'AIRBUS HELICOPTERS INC': 'Airbus Helicopters', 'Airbus Industrie': 'Airbus', 'AIRBUS INDUSTRIE': 'Airbus', 'AIRCRAFT MFG & DEVELOPMENT CO': 'Aircraft Mfg & Dev. Co.', 'Aircraft Mfg & Dev. Co. (amd)': 'Aircraft Mfg & Dev. Co.', 'Aircraft Mfg & Dev. Co. (AMD)':'Aircraft Mfg & Dev. Co.', 'Aircraft Mfg & Development Co.': 'Aircraft Mfg & Dev. Co.', 'AIRCRAFT MFG & DVLPMT CO': 'Aircraft Mfg & Dev. Co.', 'ALON': 'Alon', 'AMERICAN': 'American Aviation', 'American': 'American Aviation', 'AMERICAN AVIATION': 'American Aviation', 'American Aviation Corp. (aac)': 'American Aviation', 'AMERICAN CHAMPION': 'American Champion', 'American Champion (acac)': 'American Champion', 'American Champion (ACAC)': 'American Champion', 'American Champion Aircraft': 'American Champion', 'AMERICAN CHAMPION AIRCRAFT': 'American Champion', 'American Champion Aircraft Cor': 'American Champion', 'AMERICAN EUROCOPTER CORP': 'American Eurocopter', 'AMERICAN GENERAL ACFT CORP': 'American General Aircraft', 'American Legand Aircraft': 'American Legend', 'AMERICAN LEGEND': 'American Legend', 'AMERICAN LEGEND AIRCRAFT CO': 'American Legend', 'American Legend Aircraft Co.': 'American Legend', 'Anderson': 'Anderson Aircraft Corp.', 'Atr': 'ATR', 'AVIAT': 'Aviat', 'AVIAT AIRCRAFT': 'Aviat', 'Aviat Aircraft Inc': 'Aviat', 'AVIAT AIRCRAFT INC': 'Aviat', 'Aviat Aircraft Inc.': 'Aviat', 'Aviat Aircraft, Inc.': 'Aviat', 'Aviat Inc': 'Aviat', 'AVIAT INC': 'Aviat', 'Avid': 'Avid Aircraft', 'AVID': 'Avid Aircraft', 'AYERS': 'Ayres', 'Ayers': 'Ayres', 'AYRES': 'Ayres', 'AYRES CORP': 'Ayres', 'Ayres Corporation': 'Ayres', 'AYRES CORPORATION': 'Ayres'}
+
+df['Make'] = df['Make'].replace(make_column_name_replace_a)
+
+# Show Make values that begin with the letter A
+make_a = df[df['Make'].str.startswith('A')]['Make'].value_counts()
+
+threshold = 10
+
+filtered_make_a = make_a[make_a >= threshold]
+
+filtered_make_a
+
+
+# For Make values of Air Tractor, show their Aircraft_Category value_counts including NaN
+df[df['Make'] == 'Air Tractor']['Aircraft_Category'].value_counts(dropna=False)
+
+
+# For Make values of Air Tractor, replace Nan in Aircraft_Category with Airplane
+df.loc[df['Make'] == 'Air Tractor', 'Aircraft_Category'] = df.loc[df['Make'] == 'Air Tractor', 'Aircraft_Category'].fillna('Airplane')
