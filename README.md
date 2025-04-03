@@ -26,3 +26,5 @@ Completing the Report Status column of the dataset would be extremely helpful in
 ## Repo Structure
 Phase_1_project-aviation.ipynb is the aggregation of the analysis code
 working-df holds the dataset (AviationData.csv)
+## Links to external project files
+<a href="https://public.tableau.com/views/Aviation_17434275679900/phaseanddamage?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link" target="_blank">Tableau Worksheets and Dashboard</a>
