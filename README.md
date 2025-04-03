@@ -27,4 +27,8 @@ Completing the Report Status column of the dataset would be extremely helpful in
 <a href="https://github.com/joeycello1/NTSB/blob/main/Phase_1_project-aviation.ipynb" target="_blank">Phase_1_project-aviation.ipynb</a> is the aggregation of the analysis code<br>
 The folder working-df holds the dataset (AviationData.csv)
 ## Links to other project files
-<a href="https://public.tableau.com/views/Aviation_17434275679900/phaseanddamage?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link" target="_blank">Tableau Worksheets and Dashboard</a>
+<a href="https://public.tableau.com/views/Aviation_17434275679900/phaseanddamage?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link" target="_blank">Tableau Worksheets and Dashboard</a><br><br>
+<a href="https://github.com/joeycello1/NTSB/blob/main/Aviation_presentation_slides.pdf" target="_blank">Presentation Slides as a PDF</a><br><br>
+<a href="https://github.com/joeycello1/NTSB/blob/main/jupyter-notebook.pdf" target="_blank">Jupyter Notebook as a PDF</a><br><br>
+<a href="https://github.com/joeycello1/NTSB/blob/main/presentation.pdf" target="_blank">PDF of Presentation Text and Visuals</a>
+
